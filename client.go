@@ -18,7 +18,7 @@ func NewClient(webroot string) *Client {
 	return &Client{
 		BaseURL: baseurl,
 		HTTPClient: &http.Client{
-			Timeout: time.Minute,
+			Timeout: time.Minute, // timout set to one minute
 		},
 	}
 }

@@ -19,8 +19,8 @@ type FormExportRows struct {
 // POSTExportRows expects two parameters 'project', the project id
 // and  'format' commonly csv, tsv, xls, xlsx, ods, html.
 // In the form data it expects 'engine' : JSON string... (e.g. '{"facets":[],"mode":"row-based"}')
-func POSTExportRows(ParamExportRows, FormExportRows) error {
-	engine, err := json.Marshal(FormExportRows.Facets)
+func POSTExportRows(params ParamExportRows, forms FormExportRows) error {
+	engine, err := json.Marshal(forms.Facets)
 	if err != nil {
 		return err
 	}
