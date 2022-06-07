@@ -1,6 +1,8 @@
 package gorefine
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // ProjectModel is the type that holds the model for a specific project
 // This includes columns, records, overlay models and scripting
@@ -40,7 +42,7 @@ type ProjectModel struct {
 // It returns a ProjectModel and an error.
 func GETProjectModel(c *Client, projectid string) (ProjectModel, error) {
 	var pm ProjectModel
-	resp, err := c.HTTPClient.Get(c.BaseURL + "?" + projectid)
+	resp, err := c.HTTPClient.Get(c.BaseURL + corepath + "get-models?project=" + projectid)
 	if err != nil {
 		return pm, err
 	}
