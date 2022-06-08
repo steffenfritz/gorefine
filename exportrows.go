@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
 	"net/url"
 )
 
@@ -27,7 +28,7 @@ func POSTExportRows(c *Client, params ParamExportRows, forms FormExportRows) err
 	if err != nil {
 		return err
 	}
-	if jsonValid := json.Valid([]byte(engine)); !jsonValid {
+	if jsonValid := json.Valid(engine); !jsonValid {
 		return errors.New("JSON for export in POSTExportRows function not valid")
 	}
 
@@ -43,11 +44,15 @@ func POSTExportRows(c *Client, params ParamExportRows, forms FormExportRows) err
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("HTTP Status code not ok: " + err.Error())
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.New(err.Error())
 	}
-	
+
 	// debug
 	println(string(body))
 

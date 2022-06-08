@@ -2,6 +2,8 @@ package gorefine
 
 import (
 	"encoding/json"
+	"errors"
+	"net/http"
 )
 
 // ProjectModel is the type that holds the model for a specific project
@@ -47,6 +49,10 @@ func GETProjectModel(c *Client, projectid string) (ProjectModel, error) {
 		return pm, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return ProjectModel{}, errors.New("HTTP Status code not ok: " + err.Error())
+	}
 
 	// Try to decode the response to the struct
 	err = json.NewDecoder(resp.Body).Decode(&pm)
