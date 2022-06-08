@@ -4,15 +4,11 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 )
 
 // POSTDeleteProject expects a project id in a json encoded body and return a json encoded response
 func POSTDeleteProject(c *Client, params ParamGeneric) ([]byte, error) {
-	formData := url.Values{
-		"project":    {params.ProjectID},
-		"csrf_token": {params.CSRFToken},
-	}
+	formData := GenericFormData(params)
 
 	resp, err := c.HTTPClient.PostForm(c.BaseURL+"/command/core/delete-project", formData)
 	defer resp.Body.Close()

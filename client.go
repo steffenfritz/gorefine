@@ -30,7 +30,7 @@ type ParamGeneric struct {
 
 // GenericFormData returns a form filled with generic information
 // project : projectid. csrf_token : CSRF token
-func GenericFormData(params ParamGeneric) interface{} {
+func GenericFormData(params ParamGeneric) url.Values {
 	return url.Values{
 		"project":    {params.ProjectID},
 		"csrf_token": {params.CSRFToken},
