@@ -44,28 +44,43 @@ func main() {
 		Mode:   "row-based",
 	}
 
-	err = gorefine.POSTExportRows(client, params, form)
+	// We always have to initialize a ParamTempl or ... use variadic args :(
+	var templ gorefine.ParamTemplate
+	// Test templated export
+	templ.Separator = ","
+	templ.Prefix = "BEGIN"
+	templ.Suffix = "END"
+	templ.TemplFile = "/Users/steffen/go/src/github.com/steffenfritz/gorefine/cmd/testclient/test.grel"
+
+	// CSV export without template
+	err = gorefine.POSTExportRows(client, params, form, templ)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	// Template export
+	params.Format = "template"
+	err = gorefine.POSTExportRows(client, params, form, templ)
 	if err != nil {
 		log.Println(err.Error())
 	}
 	// End Test POSTExportRows()
 
 	// Test GETCSRFToken()
-	csrftoken, err := gorefine.GETCSRFToken(client)
+	/*csrftoken, err := gorefine.GETCSRFToken(client)
 	if err != nil {
 		log.Fatalln(err.Error()) // We fatally quit here because we need the token for further tests
-	}
+	}*/
 	// Set generic parameters for altering requests
-	var genericparams = gorefine.ParamGeneric{
+	/*var genericparams = gorefine.ParamGeneric{
 		ProjectID: *projectid,
 		CSRFToken: csrftoken.Token,
-	}
+	}*/
 
 	// Test POSTDeleteProject()
-	result, err := gorefine.POSTDeleteProject(client, genericparams)
+	/*result, err := gorefine.POSTDeleteProject(client, genericparams)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println(string(result))
+	log.Println(string(result))*/
 	// EndTest POSTDeleteProject
 }

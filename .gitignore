@@ -16,3 +16,4 @@
 
 .idea/
 /cmd/testclient/testclient
+curl_ex
