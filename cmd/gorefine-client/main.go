@@ -64,7 +64,7 @@ func main() {
 		}
 
 		if (*format == "template") && ((len(*templfile) == 0) || len(*templatetext) == 0) {
-			log.Println("A template file or text is mandatory for this operation. Quittig.")
+			log.Println("A template file or text is mandatory for this operation. Quitting.")
 			return
 		}
 	}
