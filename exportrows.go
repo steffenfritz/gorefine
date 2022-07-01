@@ -18,10 +18,13 @@ type ParamExportRows struct {
 
 // ParamTemplate holds the parameters for templated exports
 type ParamTemplate struct {
-	Prefix    string
-	Suffix    string
-	Separator string
-	TemplFile string
+	Prefix     string
+	Suffix     string
+	Template   string
+	Separator  string
+	TemplFile  string
+	PrefixFile string
+	SuffixFile string
 }
 
 // FormExportRows is the type for the form data used in POSTExportRows
@@ -48,17 +51,55 @@ func POSTExportRows(c *Client, params ParamExportRows, forms FormExportRows, tem
 		"engine":  {string(engine)},
 	}
 
+	// We have to decide some steps here:
+	//   If we have the template format, we have to check if there are prefix and suffix files
+	//   If so we ignore prefixes and suffixes provided via cli argument.
 	if params.Format == "template" {
-		// We read the template file from the provided path
-		// ioutil.ReadFile should be ok for template files
-		content, err := ioutil.ReadFile(templ.TemplFile)
+		var templtemplate string
+		var templprefix string
+		var templsuffix string
+
+		if len(templ.TemplFile) != 0 {
+			// We read the template files from the provided paths
+			// ioutil.ReadFile should be ok for template files
+			// If no template file is provided we set the template string to templ.Template
+			// If no templ.Template is provided there should be no problem as it is initialized
+			// as an empty string.
+			tmpTempltemplate, err := ioutil.ReadFile(templ.TemplFile)
+			if err != nil {
+				return errors.New("Could not read template file: " + err.Error())
+			}
+			templtemplate = string(tmpTempltemplate)
+		} else {
+			templtemplate = templ.Template
+		}
+
+		if len(templ.PrefixFile) != 0 {
+			tmpTemplprefix, err := ioutil.ReadFile(templ.PrefixFile)
+			if err != nil {
+				return errors.New("Could not read prefix file: " + err.Error())
+			}
+			templprefix = string(tmpTemplprefix)
+		} else {
+			templprefix = templ.Prefix
+		}
+		if len(templ.SuffixFile) != 0 {
+			tmpTemplsuffix, err := ioutil.ReadFile(templ.SuffixFile)
+			if err != nil {
+				return errors.New("Could not read suffix file: " + err.Error())
+			}
+			templsuffix = string(tmpTemplsuffix)
+		} else {
+			// We handle the suffix like the prefix file
+			templsuffix = templ.Suffix
+		}
 		if err != nil {
 			return err
 		}
-		formData.Add("prefix", templ.Prefix)
-		formData.Add("suffix", templ.Suffix)
+		formData.Add("prefix", templprefix)
+		formData.Add("suffix", templsuffix)
 		formData.Add("separator", templ.Separator)
-		formData.Add("template", string(content))
+		formData.Add("template", string(templtemplate))
 	}
 
 	resp, err := c.HTTPClient.PostForm(c.BaseURL+corepath+"export-rows", formData)
