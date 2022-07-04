@@ -1,9 +1,11 @@
 package main
 
-import "log"
+import (
+	"fmt"
+)
 
 func printlicense() {
-	log.Println(`<one line to give the program's name and a brief idea of what it does.>
+	fmt.Println(`gorefine-client - An OpenRefine Commandline Client
 	Copyright (C) 2022  Steffen Fritz
 
 		This program is free software: you can redistribute it and/or modify
