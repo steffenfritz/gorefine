@@ -27,7 +27,7 @@ func main() {
 	// Action flags
 	// getMetadata := flag.BoolP("get-metadata", "", false, "Get project metadata. project-id flag is mandatory")
 	exportRows := flag.BoolP("export-rows", "", false, "Export rows. format flag is mandatory")
-	// deleteProject := flag.BoolP("delete-project", "", false, "Delete Project. project-id flag is mandatory")
+	deleteProject := flag.BoolP("delete-project", "", false, "Delete Project. project-id flag is mandatory")
 
 	printLicense := flag.Bool("license", false, "Print the license")
 	flag.Parse()
@@ -51,18 +51,14 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	// debug
-	println(csrftoken.Token)
 
 	// Set static parameters for most of the requests
-	// NEXT
-	/*var genericparams = gorefine.ParamGeneric{
+	var genericparams = gorefine.ParamGeneric{
 		ProjectID: *projectid,
 		CSRFToken: csrftoken.Token,
-	}*/
+	}
 
-	//
-	// Export rows
+	// Export rows function
 	if *exportRows {
 		if len(*format) == 0 {
 			log.Println("The format flag is mandatory for this operation. Quitting.")
@@ -86,4 +82,14 @@ func main() {
 			log.Println(err.Error())
 		}
 	}
+
+	// Delete project
+	if *deleteProject {
+		result, err := gorefine.POSTDeleteProject(client, genericparams)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(string(result))
+	}
+
 }
