@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 
 	flag "github.com/spf13/pflag"
@@ -25,7 +27,8 @@ func main() {
 	facets := flag.StringSliceP("facets", "", []string{}, "A list of facets, e.g. --facets=\"v1,v2\"")
 	mode := flag.StringP("mode", "", "row-based", "The data mode, possible values are row-based or record-based")
 	// Action flags
-	// getMetadata := flag.BoolP("get-metadata", "", false, "Get project metadata. project-id flag is mandatory")
+	//getMetadata := flag.BoolP("get-metadata", "", false, "Get project metadata. project-id flag is mandatory")
+	getModel := flag.BoolP("get-model", "", false, "Get project model. project-id flag is mandatory")
 	exportRows := flag.BoolP("export-rows", "", false, "Export rows. format flag is mandatory")
 	deleteProject := flag.BoolP("delete-project", "", false, "Delete Project. project-id flag is mandatory")
 
@@ -81,6 +84,20 @@ func main() {
 		if err != nil {
 			log.Println(err.Error())
 		}
+	}
+
+	// Get project model
+	if *getModel {
+		model, err := gorefine.GETProjectModel(client, *projectid)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		modelJSON, err := json.Marshal(model)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		fmt.Println(string(modelJSON))
 	}
 
 	// Delete project
