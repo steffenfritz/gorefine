@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	flag "github.com/spf13/pflag"
 	"github.com/steffenfritz/gorefine"
-	"log"
 )
 
 func main() {
@@ -13,12 +14,13 @@ func main() {
 	// Information flags
 	serverurl := flag.StringP("server", "s", "", "The server URL, e.g. http://127.0.0.1:8080")
 	projectid := flag.StringP("project-id", "", "", "The numeric project id")
-	templfile := flag.StringP("template-file", "", "", "The path to a template file for exports")
-	templatetext := flag.StringP("template", "", "", "The template provided as text argument for exports")
-	templprefixfile := flag.StringP("prefix-file", "", "", "The path to a prefix template file for exports")
-	templprefixtext := flag.StringP("prefix", "", "", "The template prefix provided as text argument for exports")
-	templsuffixfile := flag.StringP("suffix-file", "", "", "The path to a suffix template file for exports")
-	templsuffixtext := flag.StringP("suffix", "", "", "The template suffix provided as text argument for exports")
+	templ.TemplFile = flag.StringP("template-file", "", "", "The path to a template file for exports")
+	templ.Template = flag.StringP("template", "", "", "The template provided as text argument for exports")
+	templ.PrefixFile = flag.StringP("prefix-file", "", "", "The path to a prefix template file for exports")
+	templ.Prefix = flag.StringP("prefix", "", "", "The template prefix provided as text argument for exports")
+	templ.SuffixFile = flag.StringP("suffix-file", "", "", "The path to a suffix template file for exports")
+	templ.Suffix = flag.StringP("suffix", "", "", "The template suffix provided as text argument for exports")
+	templ.Separator = flag.StringP("separator", "", "", "A separator provided as text argument for exports")
 	format := flag.StringP("format", "f", "", "The format used for exports and imports, e.g. csv, tsv, json. If the format is template, templates can be used")
 	facets := flag.StringSliceP("facets", "", []string{}, "A list of facets, e.g. --facets=\"v1,v2\"")
 	mode := flag.StringP("mode", "", "row-based", "The data mode, possible values are row-based or record-based")
@@ -49,23 +51,39 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+	// debug
+	println(csrftoken.Token)
 
-	// Set generic parameters for altering requests
-	var genericparams = gorefine.ParamGeneric{
+	// Set static parameters for most of the requests
+	// NEXT
+	/*var genericparams = gorefine.ParamGeneric{
 		ProjectID: *projectid,
 		CSRFToken: csrftoken.Token,
-	}
+	}*/
 
+	//
 	// Export rows
 	if *exportRows {
-		if !(len(*format) == 0) {
+		if len(*format) == 0 {
 			log.Println("The format flag is mandatory for this operation. Quitting.")
 			return
 		}
 
-		if (*format == "template") && ((len(*templfile) == 0) || len(*templatetext) == 0) {
+		if (*format == "template") && ((len(*templ.TemplFile) == 0) && len(*templ.Template) == 0) {
 			log.Println("A template file or text is mandatory for this operation. Quitting.")
 			return
+		}
+		params := gorefine.ParamExportRows{
+			ProjectID: *projectid,
+			Format:    *format,
+		}
+		form := gorefine.FormExportRows{
+			Facets: *facets,
+			Mode:   *mode,
+		}
+		err = gorefine.POSTExportRows(client, params, form, templ)
+		if err != nil {
+			log.Println(err.Error())
 		}
 	}
 }
