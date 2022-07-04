@@ -15,5 +15,5 @@
 # vendor/
 
 .idea/
-/cmd/testclient/testclient
 curl_ex
+cmd/gorefine-client/gorefine-client

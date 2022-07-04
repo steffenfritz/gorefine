@@ -1,1 +1,0 @@
-{{cells["name"].value.toUppercase()}}
