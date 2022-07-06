@@ -16,6 +16,8 @@ func main() {
 	// Information flags
 	serverurl := flag.StringP("server", "s", "", "The server URL, e.g. http://127.0.0.1:8080")
 	projectid := flag.StringP("project-id", "", "", "The numeric project id")
+	filterquery := flag.StringP("filter-query", "", "", "The query string for filter")
+	filtercolumn := flag.StringP("filter-column", "", "", "The column for the filter query. filter-query flag is mandatory")
 	templ.TemplFile = flag.StringP("template-file", "", "", "The path to a template file for exports")
 	templ.Template = flag.StringP("template", "", "", "The template provided as text argument for exports")
 	templ.PrefixFile = flag.StringP("prefix-file", "", "", "The path to a prefix template file for exports")
